@@ -61,8 +61,6 @@ Depend on your use cases, choose the best option for you.
 When you launch an instance, it always receives a private IPv4 address and a private DNS hostname that corresponds to its private IPv4 address. If your instance has a public IPv4 address, the DNS attributes for its VPC determines whether it receives a public DNS hostname that corresponds to the public IPv4 address.
 
 
-Khi bạn khởi chạy một instance, instance đó luôn nhận được một private IPv4 IP và một private DNS hostname tương ứng với địa chỉ IPv4 đó. Nếu instance của bạn có địa chỉ IPv4 công khai, việc enable DNS hostname và DNS resolution sẽ giúp xác định địa chỉ IPv4 đó đang chỉ tới private IPv4 nào.
-
 ![VPC](../../images/3-prerequisites/vpc_7.png)
 
 #### Step 6: Complete to create VPC
