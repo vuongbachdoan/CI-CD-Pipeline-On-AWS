@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Create ECS Cluster on Building CI/CD Pipeline For ReactJs Project on GitLab Using AWS Services (ECR, Fargate, EC2)</title>
+    <link>//localhost:1313/4-mainsettings/4.4-createecscluster/</link>
+    <description>Recent content in Create ECS Cluster on Building CI/CD Pipeline For ReactJs Project on GitLab Using AWS Services (ECR, Fargate, EC2)</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <atom:link href="//localhost:1313/4-mainsettings/4.4-createecscluster/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

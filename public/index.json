@@ -1,0 +1,141 @@
+[
+{
+	"uri": "//localhost:1313/",
+	"title": "Building CI/CD Pipeline For ReactJs Project on GitLab Using AWS Services (ECR, Fargate, EC2)",
+	"tags": [],
+	"description": "",
+	"content": "CI/CD Pipeline For ReactJs Project Using AWS Services Overview After completing this workshop, you’ll be able to set up a CI/CD pipeline for your ReactJS project on GitLab. The architecture is straightforward, focusing on utilizing common AWS services like EC2, ECR, and ECS. If you’re interested in learning more about CI/CD, this is a fantastic opportunity.\nLet’s dive in! 🚀\nContent Introduction Architecture Prerequisites Main Settings Clean-up Resources "
+},
+{
+	"uri": "//localhost:1313/1-introduce/",
+	"title": "Introduction",
+	"tags": [],
+	"description": "",
+	"content": "This article is your guide to building a streamlined CI/CD pipeline for deploying your ReactJS website. Whether you\u0026rsquo;re a developer seeking automation or a cloud engineer architecting a robust CI/CD solution, the powerful combination of GitLab and AWS services can help you achieve efficiency and reliability.\n"
+},
+{
+	"uri": "//localhost:1313/1-introduce/1.1-whatiscicd/",
+	"title": "What is CI/CD?",
+	"tags": [],
+	"description": "",
+	"content": "What is CI/CD? A CI/CD pipeline is a series of automated stages that transform your code into a running website.\na. Continuous Integration (CI) Code changes are automatically pulled from your Git repository.\nUnit tests, code quality checks, and integration tests are run.\nIf successful, the code is built into a deployable artifact.\nb. Continuous Delivery (CD) The artifact is deployed to a staging environment for manual testing and approval.\nUpon approval, the artifact is deployed to the production environment.\nPerformance and health checks are continuously run.\n"
+},
+{
+	"uri": "//localhost:1313/1-introduce/1.2-benefitofcicd/",
+	"title": "Benefit Of CI/CD",
+	"tags": [],
+	"description": "",
+	"content": "Benefits of CI/CD Imagine a popular social media app experiencing a sudden surge in users. Without CI/CD, scaling the app to accommodate the increased load would involve manual code edits, testing, and deployments – a slow and error-prone process. CI/CD automates this process, allowing the app to seamlessly scale and remain responsive to user demands.\nHere is some keys advantages of CI/CD:\nReduced time and effort: Automate building, testing, and deploying, freeing up valuable development time.\nImproved quality: Catch and fix bugs early in the development cycle through automated testing.\nFaster updates: Deliver new features and fixes to users quickly and efficiently.\nEnhanced security: Automate security scans to identify and address vulnerabilities early.\nGreater collaboration: Foster a streamlined workflow for development teams.\nGet ready to explore the exciting world of CI/CD for your ReactJS website!\n"
+},
+{
+	"uri": "//localhost:1313/2-architecture/",
+	"title": "Architecture",
+	"tags": [],
+	"description": "",
+	"content": "Architecture Let take a quick look at our architecture\n"
+},
+{
+	"uri": "//localhost:1313/2-architecture/2.1-designsolution/",
+	"title": "Designing CI/CD Solution",
+	"tags": [],
+	"description": "",
+	"content": "Designing CI/CD Solution The architecture outlines the CI/CD pipeline for your project hosted on GitLab, CI/CD pipeline is defined by .gitlab-ci.yml file.\nPipeline Phases: Build: This phase focuses on building your project from the source code within the GitLab repository.\nPush: This phase involves creating a container image based on your build output and pushing it to your Elastic Container Registry (ECR) repository.\nDeploy: This phase updates your Elastic Container Service (ECS) with the newly created image from ECR.\nJob Execution Environment: The CI/CD jobs will be executed on an Elastic Compute Cloud (EC2) instance registered as a GitLab Runner. This setup allows GitLab to delegate task execution to the EC2 instance.\nHow it work? User commit code to GitLab repository. GitLab detect changes and run CI/CD pipeline (The pipeline is defined in .gitlab-ci.yml) GitLab Runner build project from source code. After build completed, GitLab runner build container image and push image to ECR. After image is pushed to ECR, GitLab runner run the deploy phase, that will be update the ECS service with latest version of container image. Service complete and newer verion of website is release. "
+},
+{
+	"uri": "//localhost:1313/2-architecture/2.2-understandresources/",
+	"title": "Understanding Resources Using in this Architecture",
+	"tags": [],
+	"description": "",
+	"content": "Elastic Compute Cloud (EC2) This AWS service provides scalable virtual servers (EC2 instances) in the cloud. Your GitLab Runner software will be installed on an EC2 instance, allowing GitLab to delegate CI/CD job execution.\nElastic Container Registry This managed AWS service acts as a secure repository for your container images. You will push the container image built during the CI/CD process to your ECR repository.\nElastic Container Service This AWS service provides a platform for running and managing containerized applications. You will use ECS to deploy your web application after updating it with the newly created container image from ECR.\nGitLab This platform serves as the source version control system for your project. It securely stores your code and tracks changes over time.\n.gitlab-ci.yml This YAML file defines the specific stages and tasks within your CI/CD pipeline, specifying the actions to be taken on each stage.\n"
+},
+{
+	"uri": "//localhost:1313/3-prerequisites/",
+	"title": "Prerequisites",
+	"tags": [],
+	"description": "",
+	"content": "\nYou need a Virtual Private Cloud (VPC) to run AWS services inside it. Placing your services inside a VPC will ensure security, and you can also implement measures such as Security Group (SG) or Network Access Control List (NACL) to protect your resources.\nAt the same time, some services like Elastic Compute Cloud (EC2), Elastic Container Service (ECS) will require you to put these services into a VPC.\nNote: You can use the default VPC, but I encourage you to create a new VPC, because each VPC should only be used for a specific purpose (putting all your services into the default VPC will make it difficult to manage your VPC later on).\n"
+},
+{
+	"uri": "//localhost:1313/3-prerequisites/3.1-createvpc/",
+	"title": "VPC",
+	"tags": [],
+	"description": "",
+	"content": "Create your VPC Step 1. Go to VPC Dashboard Navigate to VPC dashboard at this link: VPC Dashboard. Then click to Create VPC.\nStep 2. Choose CIDR block To make the VPC setup process simpler, I recommend choosing VPC and more as the Resource to create. It includes the necessary templates for a complete VPC, such as subnets, route tables, internet gateways, and endpoints, which will make creating a VPC much easier.\nChange the default name of the VPC.\nThen choosing the CICD block.\nSince IPv6 is not necessary here, so I choose No IPv6 CIDR block.\nNote: An AWS VPC CIDR (Classless Inter-Domain Routing) block defines the private IP address range for your Virtual Private Cloud. It\u0026rsquo;s essentially a pool of IP addresses that only resources within your VPC can use.\nStep 3: Create Availability Zones(AZ) Starter templates allow you to choose the number of Availability Zones (AZs) for your VPC. While two AZs are the minimum required for high availability, you can choose one or three depending on your specific needs.\nAnd you can custom your subnet, choose which AZ you want to use for your AZ.\nEx: ap-southeast-1a, ap-southeast-1b, ap-southeast-1c\nThen you custom CIDR block for each ssubnet in your VPC. CIDR block must in CIDR block of your VPC.\nStep 4: Add connection for Private Subnet to outside VPC If your want applications run Private Subnet can go to internet to get necessary packages, you can think about using NAT Gateway.\nIf you don\u0026rsquo;t want to using resource on Internet, but put packages on S3 and securely access S3 buckets, you can setup a S3 endpoint.\nDepend on your use cases, choose the best option for you.\nStep 5: Enables DNS options When you launch an instance, it always receives a private IPv4 address and a private DNS hostname that corresponds to its private IPv4 address. If your instance has a public IPv4 address, the DNS attributes for its VPC determines whether it receives a public DNS hostname that corresponds to the public IPv4 address.\nKhi bạn khởi chạy một instance, instance đó luôn nhận được một private IPv4 IP và một private DNS hostname tương ứng với địa chỉ IPv4 đó. Nếu instance của bạn có địa chỉ IPv4 công khai, việc enable DNS hostname và DNS resolution sẽ giúp xác định địa chỉ IPv4 đó đang chỉ tới private IPv4 nào.\nStep 6: Complete to create VPC Click the Create VPC button and wait until resource creation is complete.\nReview your VPC You can see which public subnets is going to internet through internet gateway.\nYou can see which private subnets is can access internet by nat gateway.\nAnd see if your private subnets is using S3 endpoint to connect to S3 buckets.\n🚀 Okay, that\u0026rsquo;s done. Now let go to our main sections!\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/",
+	"title": "Main Settings",
+	"tags": [],
+	"description": "",
+	"content": "AWS Services Here is some AWS services you will use in your CI/CD pipeline: EC2, ECR, ECS\nGitLab Beside, my project now is on GitLab environment, and I need to set up the project before I can deploy its resources to AWS.\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.1-setupgitlabproject/",
+	"title": "Setup GitLab Project",
+	"tags": [],
+	"description": "",
+	"content": "Define CI/CD pipeline with .gitlab-ci.yml Specifies the base image used for all jobs in the pipeline. Here, it\u0026rsquo;s node:18-alpine, a lightweight Node.js 18 image based on Alpine Linux.\nimage: node:18-alpine Defines three stages for the pipeline: build, push, and deploy. Jobs will run sequentially within each stage, and stages can be configured to run in parallel.\nstages:\r- build\r- push\r- deploy Runs a sequence of commands before any job:\nInstalls Python 3 and its package manager pip using apk package manager. Creates a virtual environment for awscli using python3 -m venv. Activates the virtual environment and installs awscli for interacting with AWS. Configures AWS credentials using environment variables $AWS_ACCESS_KEY_ID and $AWS_SECRET_ACCESS_KEY. before_script:\r- apk add --no-cache python3 py3-pip\r- apk add --no-cache docker\r- python3 -m venv /tmp/awscli-venv\r- source /tmp/awscli-venv/bin/activate\r- pip install awscli\r- aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID\r- aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY Defines a job named build in the build stage:\nInstalls dependencies using yarn install. Runs CI=false yarn build to build the project, likely using a build tool like Webpack or Rollup. Setting CI=false will ignore warning in build step. Saves the built artifacts in the build directory for later use. build:\rstage: build\rscript:\r- yarn install\r- CI=false yarn build\rartifacts:\rpaths:\r- build/ Defines a job named push in the push stage:\nDepends on the successful completion of the build job (dependencies: - build). Uses a different image, docker:latest, which provides necessary tools for building and pushing Docker images. Uses a Docker service (docker:dind) to run Docker commands within the job itself. Authenticates with Amazon ECR (Elastic Container Registry) using AWS CLI commands, retrieving login credentials from the environment variable $AWS_ACCESS_KEY_ID and secret. Creates a simple Dockerfile that copies the built artifacts (build/) to the image and configures Nginx server to serve them. Builds and tags the image with the commit SHA for versioning using $CI_COMMIT_SHA environment variable. Pushes the image to the specified ECR repository. push:\rstage: push\rdependencies:\r- build\rimage: docker:latest\rservices:\r- docker:dind\rscript:\r# Login to ECR using AWS CLI\r- aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/$ECR_HASH\r# Build and push Docker image\r- echo -e \u0026#34;FROM nginx:alpine\\nCOPY build/ /usr/share/nginx/html\u0026#34; \u0026gt; Dockerfile\r- echo -e \u0026#34;server {\\n\\tlisten 80;\\n\\tlocation / {\\n\\t\\troot /usr/share/nginx/html;\\n\\t\\tindex index.html index.htm;\\n\\t\\ttry_files \\$uri \\$uri/ /index.html;\\n\\t}\\n\\terror_page 404 =200 /index.html;\\n}\u0026#34; \u0026gt; default.conf\r- echo -e \u0026#34;COPY default.conf /etc/nginx/conf.d/default.conf\u0026#34; \u0026gt;\u0026gt; Dockerfile\r- docker build -t \u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA .\r- docker tag \u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA public.ecr.aws/$ECR_HASH/\u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA\r- docker push public.ecr.aws/$ECR_HASH/\u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA Defines a job named deploy in the deploy stage:\nUses AWS CLI to update an ECS (Elastic Container Service) service with a new task definition. This likely deploys the newly built image to the running container instances. Only runs this job when the pipeline is triggered by the prod branch or tag. deploy:\rstage: deploy\rscript:\r- aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $ECS_TASK_DEFINITION_ARN --desired-count 1 --force-new-deployment\ronly:\r- prod Add project variables Here is some variables need to add: AWS_ACCESS_KEY_ID: Your AWS access key ID for interacting with AWS services.\nAWS_SECRET_ACCESS_KEY: Your AWS secret access key for interacting with AWS services.\nECS_CLUSTER_NAME: The name of your ECS cluster where the service is deployed.\nECS_SERVICE_NAME: The name of the ECS service you want to update.\nECS_TASK_DEFINITION_ARN: The ARN (Amazon Resource Name) of the task definition associated with the service.\nPlease note this names! Later, when we complete creation of AWS resources, we will back to add a value for these variables.\nSteps to add variables: Step 1: Go to your project\u0026rsquo;s Settings \u0026gt; CI/CD \u0026gt; Variables.\nStep 2: Click Add variable and fill in the details.\nCreate GitLab Runner What is GitLab Runner? Think of GitLab Runner as a robot that follows your instructions in your GitLab CI/CD pipelines. It can run tests, build your application, and deploy it to production, all automatically\nIn this workshop, we\u0026rsquo;ll delve into the practical deployment of GitLab Runner on an EC2 instance running Linux\nSteps to create a GitLab Runner: Step 1: Go to your project in GitLab and open the Settings tab.\nStep 2: Under the CI/CD section, expand the Runners section.\nStep 3: Click New project runner.\nStep 4: Select your operating system where you installed the GitLab Runner. Then enter details:\nTags: you can give a tag here, then later you can set to run CI/CD pipeline on only tags you specified. Description (optional): Add a note for future reference. Configuration: Establish rules such as preventing the runner from accepting new jobs, allowing only the protected branch to run the CI/CD pipeline, restricting the use of the current runner to the current project only, and setting a maximum job timeout. Step 5: Click Create runner. This will create a runner for your project.\nPlease note the GITLAB_REGISTRATION_TOKEN (GitLab registration token), you will use this value to connect the GitLab runner from your EC2 instance.\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.2-createecrrepository/",
+	"title": "Create ECR Repository",
+	"tags": [],
+	"description": "",
+	"content": "Create ECR Repository Step 1. Go to ECR Dashboard Navigate to ECR dashboard at this link: ECR Dashboard. Then click to Get Started.\nStep 2. Choose repository type For easier steps, I will choose Public repository in General settings.\nIf you choosing Private type, you must be authenticate before can pull the image from repository. Just add some line to authenticate with AWS in .gitlab-ci.yml if you want to pull image from private ECR repository.\nStep 3. Enter a unique name for your repository Enter a name for your repository.\nStep 3. Complete creation Click Create repository to complete creation.\nAfter complete creation, you will get repository name and URI. Please note this value, because your need to add this value to variable $ECR_HASH of your GitLab Variables.\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.3-defineecstask/",
+	"title": "Define ECS Task",
+	"tags": [],
+	"description": "",
+	"content": "Create ECS Task Definition Step 1. Go to ECS Dashboard Navigate to ECS dashboard at this link: ECS Dashboard. Then click to Task definition.\nStep 2. Start to create Task Definition There are 2 options:\nIf you have previous defined task definition, you can use as JSON template.\nI want to create a new Task Definition, so I choose Create new task definition.\nStep 3. Configure infrastructure Now you need to specify some attribute for your task:\nLaunch Type: If you want AWS manage underlying infrastructure for you, choose Fargate. Otherwise, choose EC2 if you want to manage infrastructure by your self.\nOS: You can choose between Linux, or Windows.\nChoose CPU and Memory for your task.\nRole: If you want your ECS Task can interact with other AWS services, then you can specify a Role here, or create a new one.\nStep 4. Link ECS task definition with ECR repository Name: name of container that will run your task, it can be anything.\nImage URI: is the URI of ECR repository you create previously. ex: repo-uri/\u0026lt;IMAGE_NAME\u0026gt;:.\nRemember the values in your .gitlab-ci.yml file? Here is what to use that value, make sure they are same:\n- docker build -t \u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA .\r- docker tag \u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA public.ecr.aws/$ECR_HASH/\u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA\r- docker push public.ecr.aws/$ECR_HASH/\u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA Next, mapping port of your container with port of image will use. In my case, they will be 80 to 80.\nStep 5. Complete creation Click Create to create ECS Task definition.\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.4-createecscluster/",
+	"title": "Create ECS Cluster",
+	"tags": [],
+	"description": "",
+	"content": "Create ECS Cluster Step 1. Go to ECS Dashboard Navigate to ECS dashboard at this link: ECS Dashboard. Then click to Cluster.\nStep 2. Start to create Cluster Click to Create Cluster button.\nStep 3. Set a name for your cluster Enter a unique name for your cluster.\nStep 4. Choose infrastructure I choose Fargate in this case because I don\u0026rsquo;t want to manage servers. And remember, you choosed Fargate for your Task definition before.\nStep 5. Complete creation Click Create to create ECS cluster.\nCreate ECS Service Step 1: Go to Clusters Click to cluster that you want to create service. Then you will go to cluster detail page.\nStep 2: Start to create service In cluster detail page, scroll down to Services section. Then Click to Create button.\nStep 3: Config service environment I want to create a simple guide for you to start with ECS. So I choose Launch type.\nThe keys differences:\nLaunch type: If development simplicity and cost-effectiveness are your priorities, using a launch type (Fargate or EC2, depending on your preference) might be sufficient.\nCapacity provider strategy: If you need precise resource allocation, advanced scaling, and potentially cost optimization, employing a capacity provider strategy is a better option.\nStep 4: Config for deployment Application type:\nService type is more suitable if you want to host a website.\nTask type is more suitable if you want to run batch job.\nAs I discuss ealier, we will hosting a website by ECS, so Service is a great choice here.\nTask definition:\nChoose the task definition that you have created in previous steps.\nService Name\nGive a unique name for your service.\nStep 5: Choose a number of tasks Enter a number that specify the tasks you want to run.\nStep 6: Configure VPC Choose the VPC you created in prerequisites section, then choose the public subnets to run service.\nStep 6: Configure Security Group (SG) Create a new SG to protect your resource, but still open necessary port to allow user access your website. I open port 80 for my website.\nStep 7: Complete creation Click Create button to create ECS service.\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.5-createec2forgitlabrunner/",
+	"title": "Create EC2 for GitLab Runner",
+	"tags": [],
+	"description": "",
+	"content": "Create EC2 instance Step 1. Go to EC2 Dashboard Navigate to EC2 dashboard at this link: EC2 Dashboard. Then click to Instances.\nStep 2. Start to create EC2 instance Click Launch instance to create an instance.\nStep 3. Enter a name to instance Enter a unique name for your EC2 instance.\nStep 4: Choose Amazon machine image (AMI) Depend on your usage, and OS, you can choose whatever instance you like. For lower cost, I use Linux, and it offers Amazon Linux 2 for free tier.\nStep 5: Choose instance type I choose t2.micro for my instance type, if you use more CPU and RAM, you need a larger instance type here.\nStep 6: Create key pair If you want to access your instance via local SSH like your local CMD or Powershell, you can create a key here and use later. In my case, I will connect to my instance directly via AWS Console so I choose Proceed without a key pair.\nStep 7: Choose VPC Choose the VPC you created earlier, then using public subnets to help you access instance via its public IP.\nStep 8: Config Security Group To protect your instance, you can restrict access to your instance by SG. Here I allow SSH from anywhere, but you can restrict access to allow SSH from your IP address only.\nStep 9: Add User Data User Data is the script that will run at first time when you instance is starting. I use will it to connect to my GitLab Runner.\nExpand the Advance settings, then scroll down to bottom you will see User Data input box.\nPlease copy this script and paste to you User Data.\nsudo su - root\rcurl -L --output /usr/local/bin/gitlab-runner \u0026#34;https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64\u0026#34;\rchmod +x /usr/local/bin/gitlab-runner\ruseradd --comment \u0026#39;GitLab Runner\u0026#39; --create-home gitlab-runner --shell /bin/bash\rgitlab-runner install --user=\u0026lt;GITLAB_USER_NAME\u0026gt; --working-directory=/home/gitlab-runner\rgitlab-runner start\ryum install -y docker\ryum install -y git\rsystemctl enable docker\rsystemctl start docker\rgitlab-runner register -n --url \u0026lt;GITLAB_URL\u0026gt; --registration-token \u0026lt;GITLAB_REGISTRATION_TOKEN\u0026gt; --executor docker --description \u0026#34;Deployment Runner\u0026#34; --docker-image \u0026#34;docker:stable\u0026#34; --tag-list deployment --docker-privileged\rgitlab-runner run This script sets up a GitLab Runner on a Linux system. It downloads the runner software, creates a dedicated user for it, and configures it to use Docker to run jobs from your GitLab server.\nStep 10: Complete creation Click Launch instance to start your EC2 instance.\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.6-connectec2withgitlabrunner/",
+	"title": "Connect EC2 with GitLab Runner",
+	"tags": [],
+	"description": "",
+	"content": "Your instance look good but in build phase, but in push phase maybe you will get this error:\nERROR: Cannot connect to the Docker daemon at tcp://docker:2375. Is the docker daemon running?\rERROR: Job failed: exit code 1 Look back our push phase:\npush:\rstage: push\rdependencies:\r- build\rimage: docker:latest\rservices:\r- docker:dind\rscript:\r# Login to ECR using AWS CLI\r- aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/$ECR_HASH\r# Build and push Docker image\r- echo -e \u0026#34;FROM nginx:alpine\\nCOPY build/ /usr/share/nginx/html\u0026#34; \u0026gt; Dockerfile\r- echo -e \u0026#34;server {\\n\\tlisten 80;\\n\\tlocation / {\\n\\t\\troot /usr/share/nginx/html;\\n\\t\\tindex index.html index.htm;\\n\\t\\ttry_files \\$uri \\$uri/ /index.html;\\n\\t}\\n\\terror_page 404 =200 /index.html;\\n}\u0026#34; \u0026gt; default.conf\r- echo -e \u0026#34;COPY default.conf /etc/nginx/conf.d/default.conf\u0026#34; \u0026gt;\u0026gt; Dockerfile\r- docker build -t \u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA .\r- docker tag \u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA public.ecr.aws/$ECR_HASH/\u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA\r- docker push public.ecr.aws/$ECR_HASH/\u0026lt;IMAGE_NAME\u0026gt;:$CI_COMMIT_SHA Problem due to the push phase might encounter an error due to a potential incompatibility between the Docker image used for running tasks (docker:latest) and the Docker image being built, tagged, and pushed (nginx:alpine ).\nBecause the two Docker images might not share the necessary Docker environment for building and pushing images.\nThe solution is mount the volumes of the two Docker images together to ensure they share a consistent Docker environment.\nStep 1: Go to Instances In EC2 dashboard, click Instances in left sidebar to go to instance page.\nStep 2: Connect to EC2 instance Select the instance you want to connect, then click Connect button.\nStep 3: Choose intance connect type I will use EC2 instance connect via AWS console. Then click Connect to continue.\nNow you can see the Linux terminal\nStep 4: Mount docker volume To mount docker volume, enter following scripts:\nsudo su - root\rsudo nano /etc/gitlab-runner/config.toml Scroll down and find the line of volume, then add /var/run/docker.sock:/var/run/docker.sock in the array. It will look like this:\nStep 5: Check GitLab Runner status Back to your GitLab project and check if the GitLab runner status is running.\nOkay, now you completed all setup. Now let see our result!\n"
+},
+{
+	"uri": "//localhost:1313/4-mainsettings/4.7-result/",
+	"title": "Result",
+	"tags": [],
+	"description": "",
+	"content": "Result Check if your GiLab pipeline complete in both 3 phase Check if your Cluster static is active, and service is active Check if your website is deployed You can go to task detail page, find the public IP address that given to your task.\n"
+},
+{
+	"uri": "//localhost:1313/5-cleanup/",
+	"title": "Clean Up Resources",
+	"tags": [],
+	"description": "",
+	"content": "Here is some service need to cleanup Delete EC2 instance (Instance connect to your GitLab Runner) Back to EC2 Dashboard, go to Instances from left sidebar and delete.\nDelete ECR repository Back to ECR Dashboard, go to Repositories from left sidebar and delete.\nDelete ECS Cluster Back to ECS Dashboard, delete your task and service first, then delete your cluster.\nDelete ECS Task definition Back to ECS Dashboard, go to Task definition from left sidebar and delete.\nDelete NAT Gateway Back to your VPC, go to NAT Gateway from left sidebar and delete.\nDelete S3 Endpoint Back to your VPC, go to Endpoints from left sidebar and delete.\nDelete Elastic IP Back to your VPC, go to Elastic IPs from left sidebar and delete.\nDelete Elstic Network Interface (ENI) Back to EC2 Dashboard, go to Network Interface and delete.\nDelete VPC Back to your VPC, select the VPC you want to delete and delete.\n🎉 Everything is done. Hope you have a good experience with this workshop!\n"
+},
+{
+	"uri": "//localhost:1313/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

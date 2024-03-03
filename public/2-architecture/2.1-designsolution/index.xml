@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Designing CI/CD Solution on Building CI/CD Pipeline For ReactJs Project on GitLab Using AWS Services (ECR, Fargate, EC2)</title>
+    <link>//localhost:1313/2-architecture/2.1-designsolution/</link>
+    <description>Recent content in Designing CI/CD Solution on Building CI/CD Pipeline For ReactJs Project on GitLab Using AWS Services (ECR, Fargate, EC2)</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <atom:link href="//localhost:1313/2-architecture/2.1-designsolution/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

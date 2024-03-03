@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Define ECS Task on Xây dựng CI/CD cho một dự án ReactJS trên GitLab, sử dụng các dịch vụ AWS như ECR (Elastic Container Registry), Fargate, và EC2 (Elastic Compute Cloud)</title>
+    <link>//localhost:1313/vi/4-mainsettings/4.3-defineecstask/</link>
+    <description>Recent content in Define ECS Task on Xây dựng CI/CD cho một dự án ReactJS trên GitLab, sử dụng các dịch vụ AWS như ECR (Elastic Container Registry), Fargate, và EC2 (Elastic Compute Cloud)</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>vi</language>
+    <atom:link href="//localhost:1313/vi/4-mainsettings/4.3-defineecstask/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
